@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Tax Audit System</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- ================= Sidebar ================= -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+
+            <i class="fa-solid fa-shield-halved"></i>
+
+            <span>AuditAI</span>
+
+        </div>
+
+        <ul class="menu">
+
+            <li class="active" data-page="dashboard">
+                <i class="fa-solid fa-chart-line"></i>
+                Dashboard
+            </li>
+
+            <li data-page="transactions">
+                <i class="fa-solid fa-money-check-dollar"></i>
+                Transactions
+            </li>
+
+            <li data-page="import">
+                <i class="fa-solid fa-file-import"></i>
+                Import CSV
+            </li>
+
+            <li data-page="receipts">
+                <i class="fa-solid fa-receipt"></i>
+                Receipts
+            </li>
+
+            <li data-page="ocr">
+                <i class="fa-solid fa-camera"></i>
+                OCR
+            </li>
+
+            <li data-page="matching">
+                <i class="fa-solid fa-link"></i>
+                Matching
+            </li>
+
+            <li data-page="gap">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                Gap Analysis
+            </li>
+
+            <li data-page="agent">
+                <i class="fa-solid fa-robot"></i>
+                AI Agent
+            </li>
+
+            <li data-page="reports">
+                <i class="fa-solid fa-file-pdf"></i>
+                Reports
+            </li>
+
+            <li data-page="settings">
+                <i class="fa-solid fa-gear"></i>
+                Settings
+            </li>
+
+            <li id="logoutBtn">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                Logout
+            </li>
+
+        </ul>
+
+    </aside>
+
+    <!-- ================= Main ================= -->
+
+    <main class="content">
+
+        <!-- Topbar -->
+
+        <header class="topbar">
+
+            <div class="pageTitle">
+
+                <h2>AI Tax Audit Dashboard</h2>
+
+                <p>Enterprise Financial Compliance Platform</p>
+
+            </div>
+
+            <div class="topRight">
+
+                <input
+                        id="globalSearch"
+                        placeholder="Search..."
+                        type="text">
+
+                <button id="refreshDashboard">
+
+                    <i class="fa-solid fa-rotate"></i>
+
+                </button>
+
+                <div class="profile">
+
+                    <img
+                            src="https://i.pravatar.cc/40"
+                            alt="profile">
+
+                    <span>Admin</span>
+
+                </div>
+
+            </div>
+
+        </header>
+
+        <!-- ================= Dashboard ================= -->
+
+        <section
+                id="dashboard"
+                class="page activePage">
+
+            <div class="cards">
+
+                <div class="card">
+
+                    <div>
+
+                        <h4>Total Transactions</h4>
+
+                        <h1 id="totalTransactions">0</h1>
+
+                    </div>
+
+                    <i class="fa-solid fa-money-check-dollar"></i>
+
+                </div>
+
+                <div class="card">
+
+                    <div>
+
+                        <h4>Total Receipts</h4>
+
+                        <h1 id="totalReceipts">0</h1>
+
+                    </div>
+
+                    <i class="fa-solid fa-receipt"></i>
+
+                </div>
+
+                <div class="card">
+
+                    <div>
+
+                        <h4>Alerts</h4>
+
+                        <h1 id="totalAlerts">0</h1>
+
+                    </div>
+
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+
+                </div>
+
+                <div class="card">
+
+                    <div>
+
+                        <h4>Matched</h4>
+
+                        <h1 id="matchedTransactions">0</h1>
+
+                    </div>
+
+                    <i class="fa-solid fa-circle-check"></i>
+
+                </div>
+
+                <div class="card">
+
+                    <div>
+
+                        <h4>Pending</h4>
+
+                        <h1 id="pendingTransactions">0</h1>
+
+                    </div>
+
+                    <i class="fa-solid fa-clock"></i>
+
+                </div>
+
+                <div class="card">
+
+                    <div>
+
+                        <h4>Failed</h4>
+
+                        <h1 id="failedTransactions">0</h1>
+
+                    </div>
+
+                    <i class="fa-solid fa-circle-xmark"></i>
+
+                </div>
+
+            </div>
+
+            <!-- Dashboard Charts -->
+
+            <div class="dashboardGrid">
+
+                <div class="chartCard">
+
+                    <h3>Monthly Transactions</h3>
+
+                    <canvas id="transactionChart"></canvas>
+
+                </div>
+
+                <div class="chartCard">
+
+                    <h3>Status Distribution</h3>
+
+                    <canvas id="statusChart"></canvas>
+
+                </div>
+
+            </div>
+
+            <!-- Recent Transactions -->
+
+            <div class="tableCard">
+
+                <div class="tableHeader">
+
+                    <h3>Recent Transactions</h3>
+
+                    <button id="viewAllBtn">
+
+                        View All
+
+                    </button>
+
+                </div>
+
+                <table>
+
+                    <thead>
+
+                    <tr>
+
+                        <th>ID</th>
+
+                        <th>Vendor</th>
+
+                        <th>Amount</th>
+
+                        <th>Status</th>
+
+                        <th>Date</th>
+
+                        <th>Action</th>
+
+                    </tr>
+
+                    </thead>
+
+                    <tbody id="recentTransactions">
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+        <!-- ================= TRANSACTIONS ================= -->
+
+<section id="transactions" class="page">
+
+    <div class="pageHeader">
+
+        <h2>Transactions</h2>
+
+        <div class="headerActions">
+
+            <input
+                type="text"
+                id="transactionSearch"
+                placeholder="Search Vendor / Transaction">
+
+            <select id="statusFilter">
+
+                <option value="">All Status</option>
+                <option>MATCHED</option>
+                <option>PENDING</option>
+                <option>FAILED</option>
+                <option>UNDER_REVIEW</option>
+
+            </select>
+
+            <button id="refreshTransactions">
+
+                Refresh
+
+            </button>
+
+        </div>
+
+    </div>
+
+    <div class="tableCard">
+
+        <table>
+
+            <thead>
+
+            <tr>
+
+                <th>Transaction No</th>
+
+                <th>Vendor</th>
+
+                <th>Amount</th>
+
+                <th>Date</th>
+
+                <th>Status</th>
+
+                <th>Receipt</th>
+
+                <th>Actions</th>
+
+            </tr>
+
+            </thead>
+
+            <tbody id="transactionTable">
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</section>
+
+<!-- ================= IMPORT CSV ================= -->
+
+<section id="import" class="page">
+
+    <div class="pageHeader">
+
+        <h2>Import Transactions</h2>
+
+    </div>
+
+    <div class="uploadCard">
+
+        <i class="fa-solid fa-file-csv uploadIcon"></i>
+
+        <h3>Select CSV or Excel File</h3>
+
+        <input
+            type="file"
+            id="transactionFile">
+
+        <button id="uploadTransactions">
+
+            Upload Transactions
+
+        </button>
+
+        <div class="progress">
+
+            <div
+                class="progressBar"
+                id="transactionProgress">
+
+            </div>
+
+        </div>
+
+        <div id="transactionUploadResult"></div>
+
+    </div>
+
+</section>
+
+<!-- ================= RECEIPTS ================= -->
+
+<section id="receipts" class="page">
+
+    <div class="pageHeader">
+
+        <h2>Upload Receipt</h2>
+
+    </div>
+
+    <div class="uploadCard">
+
+        <i class="fa-solid fa-receipt uploadIcon"></i>
+
+        <input
+            type="text"
+            id="receiptTransactionId"
+            placeholder="Transaction ID">
+
+        <input
+            type="file"
+            id="receiptFile">
+
+        <button id="uploadReceipt">
+
+            Upload Receipt
+
+        </button>
+
+        <div class="progress">
+
+            <div
+                class="progressBar"
+                id="receiptProgress">
+
+            </div>
+
+        </div>
+
+        <div id="receiptResult"></div>
+
+    </div>
+
+</section>
+
+<!-- ================= OCR ================= -->
+
+<section id="ocr" class="page">
+
+    <div class="pageHeader">
+
+        <h2>OCR Processing</h2>
+
+    </div>
+
+    <div class="formCard">
+
+        <label>
+
+            Receipt ID
+
+        </label>
+
+        <input
+            type="text"
+            id="ocrReceiptId"
+            placeholder="Receipt UUID">
+
+        <button id="runOCR">
+
+            Run OCR
+
+        </button>
+
+        <hr>
+
+        <textarea
+
+            id="ocrOutput"
+
+            rows="15"
+
+            placeholder="OCR Result"
+
+            readonly>
+
+        </textarea>
+
+    </div>
+
+</section>
+
+<!-- ================= MATCHING ================= -->
+
+<section id="matching" class="page">
+
+    <div class="pageHeader">
+
+        <h2>Transaction Matching</h2>
+
+    </div>
+
+    <div class="formCard">
+
+        <label>
+
+            Transaction ID
+
+        </label>
+
+        <input
+            id="matchTransactionId"
+            type="text">
+
+        <label>
+
+            Receipt ID
+
+        </label>
+
+        <input
+            id="matchReceiptId"
+            type="text">
+
+        <button id="runMatching">
+
+            Match Receipt
+
+        </button>
+
+        <div
+            id="matchingResult"
+            class="resultBox">
+
+        </div>
+
+    </div>
+
+</section>
+<!-- ================= GAP ANALYSIS ================= -->
+
+<section id="gap" class="page">
+
+    <div class="pageHeader">
+
+        <h2>Gap Analysis</h2>
+
+    </div>
+
+    <div class="formCard">
+
+        <label>Transaction ID</label>
+
+        <input
+            id="gapTransactionId"
+            type="text"
+            placeholder="Enter Transaction UUID">
+
+        <button id="runGap">
+
+            Analyze Gaps
+
+        </button>
+
+        <div
+            id="gapResult"
+            class="resultBox">
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ================= AI AGENT ================= -->
+
+<section id="agent" class="page">
+
+    <div class="pageHeader">
+
+        <h2>AI Audit Agent</h2>
+
+    </div>
+
+    <div class="formCard">
+
+        <label>
+
+            Transaction ID
+
+        </label>
+
+        <input
+            id="agentTransactionId"
+            type="text"
+            placeholder="Transaction UUID">
+
+        <button
+            id="runAgent"
+            class="primaryButton">
+
+            Run AI Audit
+
+        </button>
+
+        <div
+            class="agentResult">
+
+            <div class="cardResult">
+
+                <h3>Matching Score</h3>
+
+                <h1 id="matchingScore">
+
+                    --
+
+                </h1>
+
+            </div>
+
+            <div class="cardResult">
+
+                <h3>Risk Level</h3>
+
+                <h1 id="riskLevel">
+
+                    --
+
+                </h1>
+
+            </div>
+
+            <div class="cardResult">
+
+                <h3>Compliance</h3>
+
+                <h1 id="complianceStatus">
+
+                    --
+
+                </h1>
+
+            </div>
+
+        </div>
+
+        <h3 style="margin-top:30px">
+
+            AI Recommendation
+
+        </h3>
+
+        <textarea
+
+            id="recommendation"
+
+            rows="10"
+
+            readonly>
+
+        </textarea>
+
+        <button
+            id="downloadReport"
+            class="successButton">
+
+            Download Audit Report
+
+        </button>
+
+    </div>
+
+</section>
+
+<!-- ================= REPORTS ================= -->
+
+<section id="reports" class="page">
+
+    <div class="pageHeader">
+
+        <h2>Audit Reports</h2>
+
+    </div>
+
+    <div class="formCard">
+
+        <label>
+
+            Transaction ID
+
+        </label>
+
+        <input
+
+            id="reportTransactionId"
+
+            type="text"
+
+            placeholder="Transaction UUID">
+
+        <button
+
+            id="getReport">
+
+            Download PDF
+
+        </button>
+
+        <div
+            id="reportStatus">
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ================= SETTINGS ================= -->
+
+<section id="settings" class="page">
+
+    <div class="pageHeader">
+
+        <h2>Settings</h2>
+
+    </div>
+
+    <div class="settingsGrid">
+
+        <div class="settingCard">
+
+            <h3>Backend</h3>
+
+            <input
+                id="backendURL"
+                value="http://127.0.0.1:8000">
+
+        </div>
+
+        <div class="settingCard">
+
+            <h3>Theme</h3>
+
+            <select id="theme">
+
+                <option>Dark</option>
+
+                <option>Light</option>
+
+            </select>
+
+        </div>
+
+        <div class="settingCard">
+
+            <h3>Version</h3>
+
+            <p>
+
+                AI Tax Audit System
+
+                <br>
+
+                Version 1.0
+
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ================= LOADING ================= -->
+
+<div
+    id="loadingOverlay"
+    class="loadingOverlay">
+
+    <div class="loader"></div>
+
+    <h2>
+
+        Processing...
+
+    </h2>
+
+</div>
+
+<!-- ================= TOAST ================= -->
+
+<div
+    id="toast"
+    class="toast">
+
+    Done
+
+</div>
+
+<!-- ================= MODAL ================= -->
+
+<div
+    id="confirmModal"
+    class="modal">
+
+    <div class="modalContent">
+
+        <h2>
+
+            Confirmation
+
+        </h2>
+
+        <p id="modalMessage">
+
+        </p>
+
+        <div class="modalButtons">
+
+            <button id="confirmYes">
+
+                Yes
+
+            </button>
+
+            <button id="confirmNo">
+
+                Cancel
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ================= FOOTER ================= -->
+
+<footer>
+
+    AI Tax Audit System
+
+    © 2026
+
+    Developed by
+
+    <strong>
+
+        Vaibhav Pokhriyal
+
+    </strong>
+
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script src="script.js"></script>
+
+</body>
+
+</html>
